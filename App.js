@@ -26,7 +26,7 @@ const App = () => {
     let pictureList = list;
     pictureList = pictureList.filter((listItem) => listItem.id !== id);
     setList(pictureList);
-    StorageService.set("pictureList", list);
+    StorageService.set("pictureList", pictureList);
   }
 
   function openModal() {
