@@ -14,6 +14,8 @@ target 'photosApp' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'photosAppTests' do
     inherit! :complete
     # Pods for testing

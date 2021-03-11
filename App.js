@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Button, StyleSheet } from "react-native";
 import { StorageService } from "./app/services/StorageService";
+import { PictureService } from "./app/services/PictureService";
 import PictureList from "./app/components/PictureList";
 import CameraDialog from "./app/components/CameraDialog";
 
@@ -13,11 +14,19 @@ const App = () => {
   }, []);
 
   async function getItemsFromStorage() {
-    StorageService.get("pictureList").then((data) => setList(data));
+    const pictureList = await StorageService.get("pictureList");
+    setList(pictureList);
   }
 
   function onPictureSelect(item) {
-    console.log("a");
+    PictureService.selectPicture(item, onRemove);
+  }
+
+  async function onRemove(id) {
+    let pictureList = list;
+    pictureList = pictureList.filter((listItem) => listItem.id !== id);
+    setList(pictureList);
+    StorageService.set("pictureList", list);
   }
 
   function openModal() {
@@ -29,8 +38,9 @@ const App = () => {
 
     if (typeof resp === "string") {
       const newItem = { url: resp, id: Date.now().toString() };
-      setList([...list, newItem]);
-      StorageService.set("pictureList", list);
+      const pictureList = [...list, newItem];
+      setList(pictureList);
+      StorageService.set("pictureList", pictureList);
     }
   }
 
