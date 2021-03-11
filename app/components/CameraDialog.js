@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Clipboard from "@react-native-community/clipboard";
+import { PictureService } from "../services/PictureService";
 import {
   StyleSheet,
   View,
@@ -14,13 +16,24 @@ export default function CameraDialog(props) {
     "http://www.daninoce.com.br/wp-content/uploads/2017/10/dani-noce-bolo-brigadeiro-morango-imagem-destaque.jpg"
   );
 
-  function save() {
-    props.onClose();
+  async function save() {
+    const resp = await PictureService.save(currentImage);
+    props.onClose(resp);
   }
 
   function shoot() {}
 
-  function getImageFromClipboard() {}
+  async function getImageFromClipboard() {
+    const imageUrl = await Clipboard.getString();
+    const extensions = ["png", "jpg", "jpeg"];
+    const isImage = extensions.some((extension) =>
+      imageUrl.toLowerCase().includes(extension)
+    );
+
+    if (isImage) {
+      setCurrentImage(imageUrl);
+    }
+  }
 
   return (
     <Modal visible={props.isOpen} transparent={false} animationType="slide">
