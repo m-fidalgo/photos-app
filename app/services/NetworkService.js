@@ -6,7 +6,7 @@ export const NetworkService = {
     const file = await fs.readFile(filePath, "base64");
     const resp = await Share.open({
       title: "Compartilhar",
-      url: `data:image/png;base64,${file}`,
+      url: `data:image/jpeg;base64,${file}`,
     });
 
     return resp;

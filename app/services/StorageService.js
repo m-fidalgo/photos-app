@@ -7,4 +7,7 @@ export const StorageService = {
   async set(key, value) {
     return await AsyncStorage.setItem(key, JSON.stringify(value));
   },
+  async clear() {
+    return await AsyncStorage.clear();
+  },
 };

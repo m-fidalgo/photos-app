@@ -12,16 +12,18 @@ export const PictureService = {
   },
   async saveRemote(fromUrl) {
     const toFile = `${fs.DocumentDirectoryPath}/${Date.now()}.png`;
-    result = await fs.downloadFile({
+    const result = await fs.downloadFile({
       fromUrl,
       toFile,
     });
+    await result.promise;
+
     return "file://" + toFile;
   },
   selectPicture(item, onRemoveCallback) {
     Alert.alert(
       "Minha Imagem",
-      item.id,
+      item.url,
       [
         {
           text: "Compartilhar",
