@@ -1,14 +1,40 @@
-import { Alert } from "react-native";
+import { Alert, Platform, PermissionsAndroid } from "react-native";
+import CameraRoll from "@react-native-community/cameraroll";
 import fs from "react-native-fs";
 import { NetworkService } from "./NetworkService";
 
 export const PictureService = {
   async save(filePath) {
-    if (filePath.startsWith("http")) {
+    if (filePath.startsWith("file:///")) {
+      if (Platform.OS === "android") {
+        let permission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        );
+        if (permission === PermissionsAndroid.RESULTS.GRANTED) {
+          filePath = PictureService.saveToCamera(filePath);
+        } else {
+          Alert.alert(
+            "Permissão negada",
+            "Deve-se permitir que o app acesse a galeria"
+          );
+        }
+      } else {
+        filePath = PictureService.saveToCamera(filePath);
+      }
+    } else if (filePath.startsWith("http")) {
       filePath = await PictureService.saveRemote(filePath);
+      filePath = await PictureService.save(filePath);
     }
 
     return filePath;
+  },
+  async saveToCamera(filePath) {
+    try {
+      const url = await CameraRoll.save(filePath, "photo");
+      return url;
+    } catch (error) {
+      console.log(error);
+    }
   },
   async saveRemote(fromUrl) {
     const toFile = `${fs.DocumentDirectoryPath}/${Date.now()}.png`;

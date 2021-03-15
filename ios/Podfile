@@ -16,6 +16,8 @@ target 'photosApp' do
 
   pod 'RNShare', :path => '../node_modules/react-native-share'
 
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
   target 'photosAppTests' do
     inherit! :complete
     # Pods for testing
