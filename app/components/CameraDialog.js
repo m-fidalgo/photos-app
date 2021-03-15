@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Clipboard from "@react-native-community/clipboard";
+import { RNCamera } from "react-native-camera";
 import { PictureService } from "../services/PictureService";
 import {
   StyleSheet,
@@ -12,6 +13,7 @@ import {
 } from "react-native";
 
 export default function CameraDialog(props) {
+  const cameraRef = useRef(null);
   const [currentImage, setCurrentImage] = useState(
     "http://www.daninoce.com.br/wp-content/uploads/2017/10/dani-noce-bolo-brigadeiro-morango-imagem-destaque.jpg"
   );
@@ -21,7 +23,13 @@ export default function CameraDialog(props) {
     props.onClose(resp);
   }
 
-  function shoot() {}
+  async function shoot() {
+    if (cameraRef) {
+      const options = { quality: 0.5, base64: true };
+      const data = await cameraRef.current.takePictureAsync(options);
+      setCurrentImage(data.uri);
+    }
+  }
 
   async function getImageFromClipboard() {
     const imageUrl = await Clipboard.getString();
@@ -44,7 +52,14 @@ export default function CameraDialog(props) {
             <Text style={styles.btnClose}>X</Text>
           </TouchableOpacity>
         </View>
-        <View></View>
+        <View style={styles.cameraContainer}>
+          <RNCamera
+            style={styles.camera}
+            ref={cameraRef}
+            type={RNCamera.Constants.Type.back}
+            flashMode={RNCamera.Constants.FlashMode.auto}
+          />
+        </View>
         <View style={styles.btnsContainer}>
           <Button title="Salvar" onPress={save} color="#0062ac" />
           <Button title="Bater" onPress={shoot} color="#0062ac" />
@@ -80,6 +95,16 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     fontSize: 20,
     color: "white",
+  },
+  cameraContainer: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  camera: {
+    flex: 1,
+    height: 250,
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   btnsContainer: {
     flexDirection: "row",
